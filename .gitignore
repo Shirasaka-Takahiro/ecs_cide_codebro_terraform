@@ -12,3 +12,6 @@
 
 ##direnv
 .envrc
+
+##buildspec
+buildspec.yml

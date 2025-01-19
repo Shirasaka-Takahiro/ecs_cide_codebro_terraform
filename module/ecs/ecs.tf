@@ -1,6 +1,6 @@
 ##Cluster
 resource "aws_ecs_cluster" "cluster" {
-  name = "${var.general_config["project"]}-${var.general_config["env"]}-${var.cluster_role}-cluster"
+  name = "${var.general_config["project"]}-${var.general_config["env"]}-cluster"
 
   setting {
     name  = "containerInsights"
@@ -10,12 +10,13 @@ resource "aws_ecs_cluster" "cluster" {
 
 ##Task Definition
 resource "aws_ecs_task_definition" "task" {
-  family = "${var.general_config["project"]}-${var.general_config["env"]}-${var.cluster_role}-task"
-  container_definitions = templatefile("${path.module}/json/container_definitions.json",
+  family = "${var.general_config["project"]}-${var.general_config["env"]}-${var.task_role}-task"
+  container_definitions = templatefile("${path.module}/container_definition.json",
     {
       ecr_repository_url = var.ecr_repository,
       project            = var.general_config["project"],
       env                = var.general_config["env"]
+      task_role = var.task_role
       execution_role_arn = var.iam_ecs_arn
     }
   )
@@ -31,23 +32,16 @@ resource "aws_ecs_task_definition" "task" {
 
 ##Service
 resource "aws_ecs_service" "service" {
-  name             = "${var.general_config["project"]}-${var.general_config["env"]}-${var.cluster_role}-service"
+  name             = "${var.general_config["project"]}-${var.general_config["env"]}-${var.task_role}-service"
   cluster          = aws_ecs_cluster.cluster.arn
-  task_definition  = templatefile("${path.module}/json/task_definition.json",
-    {
-      ecr_repository_url = var.ecr_repository,
-      cw_log_group       = var.cloudwatch_log_group_name,
-      project            = var.general_config["project"],
-      env                = var.general_config["env"]
-    }
-  )
+  task_definition  = aws.aws_ecs_task_definition.task
   desired_count    = 2
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
   load_balancer {
-    target_group_arn = var.tg_blue_arn
-    container_name   = "${var.general_config["project"]}-${var.general_config["env"]}-web01"
+    target_group_arn = var.blue_tg_arn
+    container_name   = "${var.general_config["project"]}-${var.general_config["env"]}-${var.task_role}"
     container_port   = "80"
   }
 

@@ -18,6 +18,18 @@ output "alb_zone_id" {
   value = aws_lb.alb.zone_id
 }
 
-output "tg_arn_suffix" {
-  value = aws_lb_target_group.tg.arn_suffix
+output "blue_tg_name" {
+  value = aws_lb_target_group.blue_tg.name
+}
+
+output "blue_tg_arn" {
+  value = aws_lb_target_group.blue_tg.arn
+}
+
+output "green_tg_name" {
+  value = aws_lb_target_group.green_tg.name
+}
+
+output "green_tg_arn" {
+  value = aws_lb_target_group.green_tg.arn
 }

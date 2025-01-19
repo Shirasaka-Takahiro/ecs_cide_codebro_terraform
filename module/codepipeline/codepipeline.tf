@@ -20,7 +20,7 @@ resource "aws_codepipeline" "pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        RepositoryName = var.code_repository_name
+        RepositoryName = "${var.general_config["project"]}-${var.general_config["env"]}-repository"
         BranchName       = var.branch_name
       }
     }
@@ -63,6 +63,8 @@ resource "aws_codepipeline" "pipeline" {
         TaskDefinitionTemplatePath     = var.task_definition_template_path
         AppSpecTemplateArtifact        = "build_output"
         AppSpecTemplatePath            = var.app_spec_template_path
+        Image1ArtifactName             = "BuildArtifact"
+        Image1ContainerName            = "IMAGE1_NAME"
       }
     }
   }

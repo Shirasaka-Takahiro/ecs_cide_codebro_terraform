@@ -19,11 +19,11 @@ variable "general_config" {
   }
 }
 
-##Regions
-variable "regions" {
-  default = {
-    tokyo    = "ap-northeast-1"
-  }
+##Region
+variable "region" {
+  description = "Default AWS Region"
+  type        = string
+  default     = "ap-northeast-1"
 }
 
 ##Network
@@ -150,9 +150,9 @@ variable "image_name" {
   default     = "takahiros991/git_codepipeline_approve_terraform"
 }
 
-##Fargate Cluster Role
-variable "cluster_role" {
-  description = "fargate ccluster role"
+##Fargate task Role
+variable "task_role" {
+  description = "fargate task role"
   type        = string
   default     = "web"
 }
@@ -190,6 +190,14 @@ variable "deployment_group_name" {
   type        = string
   default     = "app02"
 }
+
+##Codepipeline
+variable "branch_name" {
+  description = "Codepipeline Github branch name"
+  type        = string
+  default     = "main"
+}
+
 
 ##IAM ECS
 variable "role_name_1" {
@@ -262,18 +270,4 @@ variable "branch_name" {
   description = "Codepipeline Github branch name"
   type        = string
   default     = "main"
-}
-
-##Codepipeline Task Definition Tempalte Path
-variable "task_definition_template_path" {
-  description = "Codepipeline Task Definition Tempalte Path"
-  type        = string
-  default     = ""
-}
-
-##Codepipeline App Spec Tempalte Path
-variable "app_spec_template_path" {
-  description = "Codepipeline App Spec Tempalte Path"
-  type        = string
-  default     = ""
 }

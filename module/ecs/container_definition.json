@@ -1,6 +1,6 @@
 [
     {
-        "name": "${project}-${env}-${cluster_role}",
+        "name": "${project}-${env}-${task_role}-container",
         "image": "${ecr_repository_url}",
         "essential": true,
         "portMappings": [
@@ -13,7 +13,7 @@
             "logDriver": "awslogs",
             "options": {
               "awslogs-region": "ap-northeast-1",
-              "awslogs-stream-prefix": "${project}-${env}-${cluster_role}",
+              "awslogs-stream-prefix": "${task_role}",
               "awslogs-group": "${cw_log_group}"
             }
           }

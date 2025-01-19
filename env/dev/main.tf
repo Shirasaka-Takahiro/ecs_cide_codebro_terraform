@@ -94,6 +94,14 @@ module "alb" {
   instance_ids             = module.ec2.instance_ids
 }
 
+##3
+module "s3_pipeline_bucket" {
+  source = "../../module/s3"
+
+  general_config = var.general_config
+  bucket_role    = "pipeline"
+}
+
 ##DNS
 module "domain" {
   source = "../../module/route53"
@@ -118,8 +126,8 @@ module "ecs" {
   source = "../../module/ecs"
 
   general_config = var.general_config
-  cluster_role = var.cluster_role
-  tg_blue_arn         = module.alb.tg_blue_arn
+  task_role = var.task_role
+  blue_tg_arn         = module.alb.blue_tg_arn
   ecr_repository = module.ecr.ecr_repository
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
@@ -142,7 +150,7 @@ module "cloudwatch" {
   source = "../../module/cloudwatch"
 
   general_config = var.general_config
-  codecommit_repository_arn = mudule.codecommit.codecommit_repository_arn
+  codecommit_repository_arn = module.codecommit.codecommit_repository_arn
   codepipeline_arn = module.codepipeline.codepipeline_arn
   codepipeline_event_bridge_arn = module.iam_codepipeline.iam_role_arn
 }
@@ -160,14 +168,13 @@ module "codebuild" {
   source = "../../module/codebuild"
 
   general_config    = var.general_config
-  regions           = var.regions
+  region           = var.region
+  ecr_repository_url = module.ecr.ecr_repository_url
   iam_codebuild_arn = module.iam_codebuild.iam_role_arn
-  github_url        = var.github_url
   vpc_id            = module.network.vpc_id
   dmz_subnet_ids    = module.network.dmz_subnet_ids
   internal_sg_id    = module.internal_sg.security_group_id
 }
-
 
 ##CodeDeploy
 module "codedeploy" {
@@ -179,8 +186,8 @@ module "codedeploy" {
   iam_codedeploy_arn    = module.iam_codedeploy.iam_role_arn
   ecs_cluster_name = module.ecs.ecs_cluster_name
   ecs_service_name = module.ecs.ecs_service_name
-  tg_blue_name         = module.alb.tg_blue_name
-  tg_green_name         = module.alb.tg_green_name
+  blue_tg_name         = module.alb.blue_tg_name
+  green_tg_name         = module.alb.green_tg_name
   alb_https_listener = module.alb.alb_https_listener_arn
 }
 
@@ -192,13 +199,11 @@ module "codepipeline" {
   iam_codepipeline_arn               = module.iam_codepipeline.iam_role_arn
   bucket_name                        = module.s3_pipeline_bucket.bucket_name
   branch_name                        = var.branch_name
-  full_repositroy_id                 = var.full_repositroy_id
   codebuild_project_name             = module.codebuild.codebuild_project_name
   codedeploy_app_name                = module.codedeploy.codedeploy_app_name
   codedeploy_deployment_group_name   = module.codedeploy.codedeploy_deployment_group_name
-  codestarconnections_connection_arn = module.codestarconnections.codestarconnections_connection_arn
-  task_definition_template_path      = var.task_definition_template_path
-  app_spec_template_path             = var.app_spec_template_path
+  task_definition_template_path      = file("../../module/ecs/json/task_definition.json")
+  app_spec_template_path             = file("../../module/codedeploy/appspec.yml")
 }
 
 ##IAM
@@ -207,8 +212,8 @@ module "iam_ecs" {
 
   role_name   = var.role_name_1
   policy_name = var.policy_name_1
-  role_json   = file("../../module/iam/roles_json/fargate_task_assume_role.json")
-  policy_json = file("../../module/iam/policy_json/task_execution_policy.json")
+  role_json   = file("../../module/ecs/iam_json/fargate_task_assume_role.json")
+  policy_json = file("../../module/ecs/iam_json/task_execution_policy.json")
 }
 
 module "iam_codebuild" {
@@ -216,8 +221,8 @@ module "iam_codebuild" {
 
   role_name   = var.role_name_2
   policy_name = var.policy_name_2
-  role_json   = file("../../module/iam/roles_json/codebuild_assume_role.json")
-  policy_json = file("../../module/iam/policy_json/codebuild_build_policy.json")
+  role_json   = file("../../module/codebuild/iam_json/codebuild_assume_role.json")
+  policy_json = file("../../module/codebuild/iam_json/codebuild_build_policy.json")
 }
 
 module "iam_codedeploy" {
@@ -225,8 +230,8 @@ module "iam_codedeploy" {
 
   role_name   = var.role_name_3
   policy_name = var.policy_name_3
-  role_json   = file("../../module/iam/roles_json/codedeploy_assume_role.json")
-  policy_json = file("../../module/iam/policy_json/codedeploy_deploy_policy.json")
+  role_json   = file("../../module/codedeploy/iam_json/codedeploy_assume_role.json")
+  policy_json = file("../../module/codedeploy/iam_json/codedeploy_deploy_policy.json")
 }
 
 module "iam_codepipeline" {
@@ -234,8 +239,6 @@ module "iam_codepipeline" {
 
   role_name   = var.role_name_4
   policy_name = var.policy_name_4
-  role_json   = file("../../module/iam/roles_json/codepipeline_assume_role.json")
-  policy_json = file("../../module/iam/policy_json/codepipeline_pipeline_policy.json")
+  role_json   = file("../../module/codepipeline/iam_json/codepipeline_assume_role.json")
+  policy_json = file("../../module/codepipeline/iam_json/codepipeline_pipeline_policy.json")
 }
-
-

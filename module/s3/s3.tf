@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "iam_policy_default" {
     resources = ["${aws_s3_bucket.default_bucket.arn}/*"]
     principals {
       type        = "AWS"
-      identifiers = ["${var.iam_account_id}"]
+      identifiers = [data.aws_caller_identity.current.account_id]
     }
   }
 }

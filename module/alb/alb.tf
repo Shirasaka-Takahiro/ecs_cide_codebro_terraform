@@ -21,9 +21,9 @@ resource "aws_lb" "alb" {
   }
 }
 
-##Target Group
-resource "aws_lb_target_group" "tg" {
-  name             = "${var.general_config["project"]}-${var.general_config["env"]}-tg"
+##Target Group Blue
+resource "aws_lb_target_group" "blue_tg" {
+  name             = "${var.general_config["project"]}-${var.general_config["env"]}-blue-tg"
   target_type      = "instance"
   protocol_version = "HTTP1"
   port             = "80"
@@ -42,9 +42,35 @@ resource "aws_lb_target_group" "tg" {
   }
 
   tags = {
-    Name = "${var.general_config["project"]}-${var.general_config["env"]}-tg"
+    Name = "${var.general_config["project"]}-${var.general_config["env"]}-blue-tg"
   }
 }
+
+##Target Group Green
+resource "aws_lb_target_group" "green_tg" {
+  name             = "${var.general_config["project"]}-${var.general_config["env"]}-green-tg"
+  target_type      = "instance"
+  protocol_version = "HTTP1"
+  port             = "80"
+  protocol         = "HTTP"
+  vpc_id           = var.vpc_id
+
+  health_check {
+    interval            = 30
+    path                = "/healthchek.html"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 5
+    matcher             = "200"
+  }
+
+  tags = {
+    Name = "${var.general_config["project"]}-${var.general_config["env"]}-green-tg"
+  }
+}
+
 
 ##HTTPS Listener
 resource "aws_lb_listener" "alb_https_listener" {
@@ -56,7 +82,7 @@ resource "aws_lb_listener" "alb_https_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tg.arn
+    target_group_arn = aws_lb_target_group.blue_tg.arn
   }
 }
 
@@ -64,6 +90,6 @@ resource "aws_lb_listener" "alb_https_listener" {
 resource "aws_lb_target_group_attachment" "attach_tg_to_alb" {
   count            = length(var.instance_ids)
   target_id        = element(var.instance_ids, count.index % 2)
-  target_group_arn = aws_lb_target_group.tg.arn
+  target_group_arn = aws_lb_target_group.blue_tg.arn
   port             = 80
 }

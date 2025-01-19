@@ -1,24 +1,30 @@
 ##CodeDeploy
 resource "aws_codedeploy_app" "default" {
   compute_platform = "ECS"
-  name             = "${var.general_config["project"]}-${var.general_config["env"]}-${var.codedeploy_app_name}"
+  name             = "${var.general_config["project"]}-${var.general_config["env"]}-app"
 }
 
 resource "aws_codedeploy_deployment_group" "default" {
   app_name              = aws_codedeploy_app.default.name
-  deployment_group_name = "${var.general_config["project"]}-${var.general_config["env"]}-${var.deployment_group_name}"
+  deployment_group_name = "${var.general_config["project"]}-${var.general_config["env"]}-deployment-group"
 
   service_role_arn       = var.iam_codedeploy_arn
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
+  auto_rollback_configuration {
+    enabled = true
+    events  = ["DEPLOYMENT_FAILURE"]
+  }
+
   blue_green_deployment_config {
     deployment_ready_option {
-      action_on_timeout = "CONTINUE_DEPLOYMENT"
+      action_on_timeout = "STOP_DEPLOYMENT"
+      wait_time_in_minutes = 30
     }
 
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 1
+      termination_wait_time_in_minutes = 3
     }
   }
 
@@ -30,11 +36,6 @@ resource "aws_codedeploy_deployment_group" "default" {
   deployment_style {
     deployment_option = "WITH_TRAFFIC_CONTROL"
     deployment_type   = "BLUE_GREEN"
-  }
-  
-  auto_rollback_configuration {
-    enabled = true
-    events  = ["DEPLOYMENT_FAILURE"]
   }
 
   load_balancer_info {
