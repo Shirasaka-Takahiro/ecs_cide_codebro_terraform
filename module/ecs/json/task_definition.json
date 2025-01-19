@@ -15,8 +15,8 @@
                 "logDriver": "awslogs",
                 "options": {
                   "awslogs-region": "ap-northeast-1",
-                  "awslogs-stream-prefix": "${project}-${env}-${cluster_role}",
-                  "awslogs-group": "/${project}/${env}/${cluster_role}"
+                  "awslogs-stream-prefix": "/ecs/${project}-${env}-${cluster_role}",
+                  "awslogs-group": "/ecs/${project}/${env}/${cluster_role}"
                 }
             },
             "essential": true,
@@ -41,6 +41,5 @@
     ],
     "cpu": "256",
     "memory": "512",
-    "registeredBy": "arn:aws:iam::482122962623:user/terraform-user",
     "tags": []
 }
