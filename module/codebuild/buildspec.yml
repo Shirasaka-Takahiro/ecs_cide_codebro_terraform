@@ -36,7 +36,7 @@ phases:
       - echo Finished Rewriting task definitions file
       - echo Rewriting appspec file...
       - sed -i -e "s/<project>/$project/g" module/codebuild/appspec.yml
-      - sed -i -e "s/<env>#$env/g" module/codebuild/appspec.yml
+      - sed -i -e "s/<env>/$env/g" module/codebuild/appspec.yml
       - sed -i -e "s/<service>/$service/g" module/codebuild/appspec.yml
       - cp module/codebuild/appspec.yml ./
       - echo Finished Rewriting appspec file
