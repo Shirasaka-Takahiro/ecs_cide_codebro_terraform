@@ -33,11 +33,13 @@ phases:
       - sed -i -e "s#<service>#$service#" module/codebuild/task_definition.json
       - sed -i -e "s#<execution_role_arn>#$execution_role_arn#" module/codebuild/task_definition.json
       - sed -i -e "s#<project>#$project#" module/codebuild/task_definition.json
+      - cp module/codebuild/task_definition.json ./
       - echo Finished Rewriting task definitions file
       - echo Rewriting appspec file...
       - sed -i -e "s#<project>#$project#" module/codebuild/appspec.yml
       - sed -i -e "s#<env>#$env#" module/codebuild/appspec.yml
       - sed -i -e "s#<service>#$service#" module/codebuild/appspec.yml
+      - cp module/codebuild/appspec.yml ./
       - echo Finished Rewriting appspec file
 artifacts:
     files: 
