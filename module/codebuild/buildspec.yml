@@ -6,7 +6,7 @@ phases:
       # 環境変数の設定
       - AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
       - REGION=${REGION}
-      - ECR_REPOSITORY_URI=${ECR_REPOSITORY_URL}
+      - ECR_REPOSITORY_URL=${ECR_REPOSITORY_URL}
       # コミットハッシュの先頭7桁をタグに利用する
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
@@ -17,7 +17,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $ECR_REPOSITORY_URL:latest ./docker
+      - docker build ./docker -t $ECR_REPOSITORY_URL:latest
       - docker tag $ECR_REPOSITORY_URL:latest $ECR_REPOSITORY_URL:$IMAGE_TAG
   post_build:
     commands:
@@ -28,18 +28,18 @@ phases:
       - echo Writing image definitions file...
       - printf '{"ImageURI":"%s"}' $ECR_REPOSITORY_URL:$IMAGE_TAG > imageDetail.json
       - echo Rewriting task definitions file...
-      - sed -i -e "s/<project>/$project/g" module/codebuild/task_definition.json
-      - sed -i -e "s/<env>/$env/g" module/codebuild/task_definition.json
-      - sed -i -e "s/<service>/$service/g" module/codebuild/task_definition.json
-      - sed -i -e "s/<execution_role_arn>/$execution_role_arn/g" module/codebuild/task_definition.json
+      - sed -i -e "s#<project>#$project#g" module/codebuild/task_definition.json
+      - sed -i -e "s#<env>#$env#g" module/codebuild/task_definition.json
+      - sed -i -e "s#<service>#$service#g" module/codebuild/task_definition.json
+      - sed -i -e "s#<execution_role_arn>#$execution_role_arn#g" module/codebuild/task_definition.json
       - cp module/codebuild/task_definition.json ./
       - echo Finished Rewriting task definitions file
       - echo Rewriting appspec file...
-      - sed -i -e "s/<project>/$project/g" module/codebuild/appspec.yml
-      - sed -i -e "s/<env>/$env/g" module/codebuild/appspec.yml
-      - sed -i -e "s/<service>/$service/g" module/codebuild/appspec.yml
-      - cp module/codebuild/appspec.yml ./
+      - sed -i -e "s#<project>#$project#g" module/codebuild/appspec.yml
+      - sed -i -e "s#<env>#$env#g" module/codebuild/appspec.yml
+      - sed -i -e "s#<service>#$service#g" module/codebuild/appspec.yml
       - echo Finished Rewriting appspec file
+      - cp module/codebuild/appspec.yml ./
 artifacts:
     files: 
       - imageDetail.json
