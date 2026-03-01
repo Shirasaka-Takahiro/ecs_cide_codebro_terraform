@@ -36,7 +36,7 @@ phases:
       - echo Finished Rewriting task definitions file
       - echo Rewriting appspec file...
       - sed -i -e "s#<project>#$project#" module/codebuild/appspec.yml
-      - sed -i -e "s#<env>#$env# module/codebuild/appspec.yml
+      - sed -i -e "s#<env>#$env#" module/codebuild/appspec.yml
       - sed -i -e "s#<service>#$service#" module/codebuild/appspec.yml
       - echo Finished Rewriting appspec file
 artifacts:
