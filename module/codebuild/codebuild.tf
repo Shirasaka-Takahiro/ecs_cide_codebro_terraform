@@ -15,6 +15,26 @@ resource "aws_codebuild_project" "project" {
     privileged_mode             = true
 
     environment_variable {
+      name  = "project"
+      value = var.general_config["project"]
+    }
+
+    environment_variable {
+      name  = "env"
+      value = var.general_config["env"]
+    }
+
+    environment_variable {
+      name  = "service"
+      value = var.general_config["service"]
+    }
+
+    environment_variable {
+      name  = "execution_role_arn"
+      value = var.execution_role_arn
+    }
+
+    environment_variable {
       name  = "REGION"
       value = var.region
     }

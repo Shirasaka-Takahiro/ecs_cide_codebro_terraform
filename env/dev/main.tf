@@ -143,6 +143,7 @@ module "codebuild" {
   region             = var.region
   ecr_repository_url = module.ecr.ecr_repository_url
   iam_codebuild_arn  = module.iam_codebuild.iam_role_arn
+  execution_role_arn = module.iam_ecs.iam_role_arn
   vpc_id             = module.network.vpc_id
   dmz_subnet_ids     = module.network.dmz_subnet_ids
   internal_sg_id     = module.internal_sg.security_group_id
