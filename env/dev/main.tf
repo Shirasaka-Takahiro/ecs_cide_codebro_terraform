@@ -173,8 +173,8 @@ module "codepipeline" {
   codebuild_project_name           = module.codebuild.codebuild_project_name
   codedeploy_app_name              = module.codedeploy.codedeploy_app_name
   codedeploy_deployment_group_name = module.codedeploy.codedeploy_deployment_group_name
-  task_definition_template_path    = file("../../module/codebuild/task_definition.json")
-  app_spec_template_path           = file("../../module/codebuild/appspec.yml")
+  task_definition_template_path    = "task_definition.json"
+  app_spec_template_path           = "appspec.yml"
 }
 
 ##IAM
