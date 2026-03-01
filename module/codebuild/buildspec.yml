@@ -28,16 +28,16 @@ phases:
       - echo Writing image definitions file...
       - printf '[{"name":"httpd","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
       - echo Rewriting task definitions file...
-      - sed -i -e "s#<project>#$project#" task_definition.json
-      - sed -i -e "s#<env>#$env#" task_definition.json
-      - sed -i -e "s#<service>#$service#" task_definition.json
-      - sed -i -e "s#<execution_role_arn>#$execution_role_arn#" task_definition.json
-      - sed -i -e "s#<project>#$project#" task_definition.json
+      - sed -i -e "s#<project>#$project#" module/codebuild/task_definition.json
+      - sed -i -e "s#<env>#$env#" module/codebuild/task_definition.json
+      - sed -i -e "s#<service>#$service#" module/codebuild/task_definition.json
+      - sed -i -e "s#<execution_role_arn>#$execution_role_arn#" module/codebuild/task_definition.json
+      - sed -i -e "s#<project>#$project#" module/codebuild/task_definition.json
       - echo Finished Rewriting task definitions file
       - echo Rewriting appspec file...
-      - sed -i -e "s#<project>#$project#" appspec.yml
-      - sed -i -e "s#<env>#$env# appspec.yml
-      - sed -i -e "s#<service>#$service#" appspec.yml
+      - sed -i -e "s#<project>#$project#" module/codebuild/appspec.yml
+      - sed -i -e "s#<env>#$env# module/codebuild/appspec.yml
+      - sed -i -e "s#<service>#$service#" module/codebuild/appspec.yml
       - echo Finished Rewriting appspec file
 artifacts:
     files: 
