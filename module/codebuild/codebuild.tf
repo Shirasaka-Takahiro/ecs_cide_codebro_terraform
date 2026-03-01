@@ -40,7 +40,7 @@ resource "aws_codebuild_project" "project" {
     git_clone_depth     = 0
     insecure_ssl        = false
     report_build_status = false
-    buildspec           = "buildspec.yml"
+    buildspec           = "module/codebuild/buildspec.yml"
   }
 
   vpc_config {
