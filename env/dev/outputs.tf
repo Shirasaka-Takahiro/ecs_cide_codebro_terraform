@@ -1,0 +1,29 @@
+##Network ids
+output "vpc_id" {
+  value = module.network.vpc_id
+}
+
+output "internet_gateway_id" {
+  value = module.network.internet_gateway_id
+}
+
+output "public_subnet_ids" {
+  value = module.network.public_subnet_ids
+}
+
+output "private_subnet_ids" {
+  value = module.network.private_subnet_ids
+}
+
+##Security Group ids
+output "internal_sg_id" {
+  value = module.internal_sg.security_group_id
+}
+
+output "alb_http_sg_id" {
+  value = module.alb_http_sg.security_group_id
+}
+
+output "alb_https_sg_id" {
+  value = module.alb_https_sg.security_group_id
+}
